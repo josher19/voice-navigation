@@ -1,6 +1,6 @@
 
 function addScript(guard, url, onloaded, options) {
-    if (guard !== "undefined") {
+    if (guard === true) {
         // if (onloaded) onloaded(options);
         return;
     }
@@ -31,14 +31,11 @@ function helpCommand() {
     return helpText;
 }
 
-function startListening() {
-    if (!annyang) {
-        console.log('Unable to load annyang');
-        return;
-    }
+function loadCommands() {
     var helloCommand = {
         'hello': () => { alert('Hello world!'); }
     };
+    annyang.debug(true);
     annyang.addCommands(helloCommand);
 
     addCommandsFromModels();
@@ -50,7 +47,17 @@ function startListening() {
         'debug off': () => annyang.debug(false),
         'search for *text': searchFor 
     });
+    annyang.debug(false);
+}
 
+function startListening() {
+    if (!annyang) {
+        console.log('Unable to load annyang');
+        return;
+    }
+    
+    loadCommands();
+    
     if (!SpeechKITT) {
         console.log('Unable to load SpeechKITT');
         annyang.start();
@@ -71,13 +78,14 @@ function startListening() {
     }
 }
 
-addScript(typeof annyang, '//cdnjs.cloudflare.com/ajax/libs/annyang/2.4.0/annyang.min.js',
-    () => addScript(typeof SpeechKITT, '//cdnjs.cloudflare.com/ajax/libs/SpeechKITT/1.0.0/speechkitt.min.js', startListening)
+// Make sure speach recognition scripts are loaded before startListening
+addScript(typeof annyang !== 'undefined', '//cdnjs.cloudflare.com/ajax/libs/annyang/2.4.0/annyang.min.js',
+    () => addScript(typeof SpeechKITT !== 'undefined', '//cdnjs.cloudflare.com/ajax/libs/SpeechKITT/1.0.0/speechkitt.min.js', startListening)
 );
 
 
 function getName(model) {
-    return (model.title || model.getAttribute("data-name")).replace('_sg', ' ').replace('_portraits', '').replace('_', ' ').replace(/s\b/, '(s)')
+    return (model.title || model.getAttribute("data-name")).replace('_sg', ' ').replace('_portraits', ' (portraits)').replace('_', ' ').replace(/s\b/, '(s)')
 }
 
 function makeCommand(text, command) {
