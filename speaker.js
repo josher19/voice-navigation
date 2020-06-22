@@ -2,15 +2,18 @@ function Speaker({
   lang = navigator.language || "en",
   speechSynthesis = window.speechSynthesis,
   localService = null,
+  isRandom = false,
   pitch = 1.0,
   rate = 1.0,
   volume = 1.0
 } = {}) {
   this.lang = lang;
   this.speechSynthesis = speechSynthesis;
+  this.localService = localService;
   this.pitch = pitch;
   this.rate = rate;
   this.volume = volume;
+  this.isRandom = isRandom;
 }
 
 Speaker.prototype = {
@@ -51,8 +54,16 @@ Speaker.prototype = {
     this.setRate(+speed);
     return this;
   },
+  faster() {
+    return this.setSpeed(1.2*this.rate);
+  },
+  slower() {
+    return this.setSpeed(1/1.2*this.rate);
+  },
+  
   setLocalService(localService) {
-    this.localService = localService;
+    const toBoolean = b => b == null || b === 'any' ? b : (b === 'false' ? false : !!b);
+    this.localService = toBoolean(localService);
   },
 
   getAllVoices: function getAllVoices() {
@@ -82,7 +93,7 @@ Speaker.prototype = {
   getRandomVoice: function getRandomVoice() {
     const chooseRandom = (list) =>
       list[Math.floor(Math.random() * list.length)];
-    return chooseRandom(this.getVoices());
+    return this.voice = chooseRandom(this.getVoices());
   },
 
   getNextVoice() {
@@ -96,6 +107,19 @@ Speaker.prototype = {
 
   saveVoice() {
     this.savedVoice = this.voice || this.getVoice();
+    return this.savedVoice && this.savedVoice.name;
+  },
+
+  findVoice(name) {
+    const nonEmpty = list => (!list || !list.length) ? false : list;
+    const found = nonEmpty(this.getVoices().filter(v => v.name === name)) || 
+          nonEmpty(this.getAllVoices().filter(v => v.name === name)) ||
+          []
+    return this.voice = found[0];
+  },
+  
+  hearVoices(speak = this.speak.bind(this)) {
+    return this.getVoices().map(v => { this.voice = v; speak(v.name + ' says hello!'); return v.name; })
   },
 
   warp(msg) {
@@ -106,10 +130,16 @@ Speaker.prototype = {
 
   speak(message) {
     var msg = new SpeechSynthesisUtterance(message);
-    msg.voice = this.getVoice();
+    if (this.isRandom) this.voice = this.getRandomVoice();
+    msg.voice = this.voice || this.getVoice();
     this.warp(msg);
     speechSynthesis.speak(msg);
     return msg;
+  },
+  
+  random() {
+    const chooseRandom = list => list[Math.floor(Math.random()*list.length)];
+    return speaker.speak(chooseRandom(document.body.innerText.split("\n").filter(line => line)));
   }
 };
 
