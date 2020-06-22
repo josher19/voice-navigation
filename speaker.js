@@ -35,20 +35,20 @@ Speaker.prototype = {
   },
 
   setPitch(pitch) {
-    this.pitch = pitch;
+    this.pitch = +pitch;
     return this;
   },
   setRate(rate) {
-    this.rate = rate;
+    this.rate = +rate;
     return this;
   },
   setVolume(volume) {
-    this.volume = volume;
+    this.volume = +volume;
     return this;
   },
   setSpeed(speed) {
     this.setPitch(1/speed);
-    this.setRate(speed);
+    this.setRate(+speed);
     return this;
   },
   setLocalService(localService) {
