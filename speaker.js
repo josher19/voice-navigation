@@ -1,6 +1,7 @@
 function Speaker({
   lang = navigator.language || "en",
   speechSynthesis = window.speechSynthesis,
+  localService = null,
   pitch = 1.0,
   rate = 1.0,
   volume = 1.0
@@ -35,12 +36,23 @@ Speaker.prototype = {
 
   setPitch(pitch) {
     this.pitch = pitch;
+    return this;
   },
   setRate(rate) {
     this.rate = rate;
+    return this;
   },
   setVolume(volume) {
     this.volume = volume;
+    return this;
+  },
+  setSpeed(speed) {
+    this.setPitch(1/speed);
+    this.setRate(speed);
+    return this;
+  },
+  setLocalService(localService) {
+    this.localService = localService;
   },
 
   getAllVoices: function getAllVoices() {
@@ -48,10 +60,11 @@ Speaker.prototype = {
   },
 
   getNativeVoices: function getNativeVoices(
-    lang = this.getLanguage().substring(0, 2)
+    lang = this.getLanguage().substring(0, 2),
+    localService = this.localService
   ) {
     return this.getAllVoices().filter(
-      (v) => v && v.lang && v.lang.substring(0, 2) === lang
+      v => v && v.lang && v.lang.substring(0, 2) === lang && (localService == null || localService === v.localService)
     );
   },
 
@@ -123,6 +136,7 @@ function sampleCode() {
   return sp;
 }
 
-// const speaker = sampleCode();
+var speaker = new Speaker({ localService: true });
+// speaker = sampleCode();
 // speaker.speak("hello");
 // speaker.speak("world");
