@@ -9,9 +9,15 @@ function addScript(url, onloaded, options) {
     return sc;
 }
 
+function cleanCommands(cmds) {
+    return cmds.map(s => s.replace(/[():]/g, ""));
+}
+
 function helpCommand() {
     var helpText = getModels().map(getName);
     console.log(helpText);
+    if (typeof speaker !== 'undefined') cleanCommands(helpText).map(speaker.speak.bind(speaker));
+    return helpText;
 }
 
 function startListening() {
