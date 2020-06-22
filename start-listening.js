@@ -13,10 +13,17 @@ function cleanCommands(cmds) {
     return cmds.map(s => s.replace(/[():]/g, ""));
 }
 
+function sayCommands(cmds) {
+    SpeechKITT.toggleRecognition()
+    if (typeof speaker !== 'undefined') this.cleanCommands(cmds).map(speaker.speak.bind(speaker));
+    // should pause until last phrase spoken
+    setTimeout(() => SpeechKITT.toggleRecognition(), cmd.length * 1000);
+}
+
 function helpCommand() {
     var helpText = getModels().map(getName);
     console.log(helpText);
-    if (typeof speaker !== 'undefined') cleanCommands(helpText).map(speaker.speak.bind(speaker));
+    if (typeof speaker !== 'undefined') sayCommands(helpText);
     return helpText;
 }
 
