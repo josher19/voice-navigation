@@ -1,5 +1,9 @@
 
-function addScript(url, onloaded, options) {
+function addScript(guard, url, onloaded, options) {
+    if (guard !== "undefined") {
+        // if (onloaded) onloaded(options);
+        return;
+    }
     const sc = document.createElement("script");
     sc.src = url || '//cdnjs.cloudflare.com/ajax/libs/annyang/2.4.0/annyang.min.js';
     document.body.appendChild(sc);
@@ -53,20 +57,22 @@ function startListening() {
         return;
     }
 
-    // Tell KITT to use annyang
-    SpeechKITT.annyang();
+    if (!annyang.isListening()) {
+        // Tell KITT to use annyang
+        SpeechKITT.annyang();
 
-    // Define a stylesheet for KITT to use
-    SpeechKITT.setStylesheet('//cdnjs.cloudflare.com/ajax/libs/SpeechKITT/0.3.0/themes/flat.css');
+        // Define a stylesheet for KITT to use
+        SpeechKITT.setStylesheet('//cdnjs.cloudflare.com/ajax/libs/SpeechKITT/0.3.0/themes/flat.css');
 
-    SpeechKITT.displayRecognizedSentence(true);
+        SpeechKITT.displayRecognizedSentence(true);
 
-    // Render KITT's interface
-    SpeechKITT.vroom();
+        // Render KITT's interface
+        SpeechKITT.vroom();
+    }
 }
 
-addScript('//cdnjs.cloudflare.com/ajax/libs/annyang/2.4.0/annyang.min.js',
-    () => addScript('//cdnjs.cloudflare.com/ajax/libs/SpeechKITT/1.0.0/speechkitt.min.js', startListening)
+addScript(typeof annyang, '//cdnjs.cloudflare.com/ajax/libs/annyang/2.4.0/annyang.min.js',
+    () => addScript(typeof SpeechKITT, '//cdnjs.cloudflare.com/ajax/libs/SpeechKITT/1.0.0/speechkitt.min.js', startListening)
 );
 
 
@@ -101,11 +107,11 @@ function queryDocument(query = '.speakable') {
 }
 
 function getTextButtons() {
-    return queryDocument('.buttons .text_button, .image_tag');
+    return queryDocument('.buttons .text_button, .username, .image_tag');
 }
 
 function getTextButtonCommands(textBtns = getTextButtons()) {
-    const cleanup = str => str.replace(/[-&_#]/g, " ").trim();
+    const cleanup = str => str.replace(/[-_#]/g, " ").replace(/&/g, " (and) ").trim();
     // click text button when spoken
     var cmds = textBtns.map(btn => makeCommand(cleanup(btn.textContent), btn.click.bind(btn)));
     return cmds;
