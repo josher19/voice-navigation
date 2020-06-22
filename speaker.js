@@ -119,7 +119,7 @@ Speaker.prototype = {
   },
   
   hearVoices(speak = this.speak.bind(this)) {
-    return this.getVoices().map(v => { this.voice = v; speak(v.name + ' says hello!'); return v.name; })
+    return this.getVoices().reverse().map(v => { this.voice = v; speak(v.name + ' says hello!'); return v.name; })
   },
 
   warp(msg) {
