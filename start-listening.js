@@ -17,7 +17,7 @@ function sayCommands(cmds) {
     SpeechKITT.toggleRecognition()
     if (typeof speaker !== 'undefined') this.cleanCommands(cmds).map(speaker.speak.bind(speaker));
     // should pause until last phrase spoken
-    setTimeout(() => SpeechKITT.toggleRecognition(), cmd.length * 1000);
+    setTimeout(() => SpeechKITT.toggleRecognition(), cmds.length * 1000);
 }
 
 function helpCommand() {
