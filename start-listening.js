@@ -101,12 +101,13 @@ function queryDocument(query = '.speakable') {
 }
 
 function getTextButtons() {
-    return queryDocument('.buttons .text_button');
+    return queryDocument('.buttons .text_button, .image_tag');
 }
 
 function getTextButtonCommands(textBtns = getTextButtons()) {
+    const cleanup = str => str.replace(/[-&_#]/g, " ").trim();
     // click text button when spoken
-    var cmds = textBtns.map(btn => makeCommand(btn.textContent, btn.click.bind(btn)));
+    var cmds = textBtns.map(btn => makeCommand(cleanup(btn.textContent), btn.click.bind(btn)));
     return cmds;
 }
 
