@@ -137,9 +137,9 @@ Speaker.prototype = {
     return msg;
   },
   
-  random() {
-    const chooseRandom = list => list[Math.floor(Math.random()*list.length)];
-    return speaker.speak(chooseRandom(document.body.innerText.split("\n").filter(line => line)));
+  randomText() {
+    const chooseRandomText = list => list[Math.floor(Math.random()*list.length)];
+    return this.speak(chooseRandomText(document.body.innerText.split("\n").filter(line => line)));
   }
 };
 
