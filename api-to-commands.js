@@ -6,7 +6,12 @@ function apiToCommands(api) {
 
   const log = f => (...args) => logAndReturn(f(...args))
 
-  const logAndReturn = msg => { console.log(msg); return msg; }
+  const appendText = (msg) => {
+    const cmdHistory = document.getElementById('cmdHistory');
+    if (cmdHistory && msg != null) cmdHistory.value += '\n' + (msg.text || msg.name || msg);
+    return msg;
+  };
+  const logAndReturn = msg => { console.log(msg); appendText(msg); return msg; }
 
   var cmds = {};
 
