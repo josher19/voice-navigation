@@ -90,14 +90,22 @@ Speaker.prototype = {
     return chooseRandomNumber(this.getVoices().length);
   },
 
+  chooseRandom(list=this.getNativeVoices()) {
+    return list[Math.floor(Math.random() * list.length)];
+  },
+
   getRandomVoice: function getRandomVoice() {
-    const chooseRandom = (list) =>
-      list[Math.floor(Math.random() * list.length)];
-    return this.voice = chooseRandom(this.getVoices());
+    return this.voice = this.chooseRandom(this.getVoices());
   },
 
   getNextVoice() {
     return this.getRandomVoice();
+  },
+
+  nextVoice() {
+    this.voice = this.chooseRandom(this.getNativeVoices());
+    if (this.voice && this.voice.name) this.say('This is ' + this.voice.name);
+    return this.voice;
   },
 
   getVoice() {
@@ -135,6 +143,10 @@ Speaker.prototype = {
     this.warp(msg);
     speechSynthesis.speak(msg);
     return msg;
+  },
+
+  say(message) {
+    return this.speak(message);
   },
   
   randomText() {
