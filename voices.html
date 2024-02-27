@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+  <title>Browser Voices</title>
+  <script type="text/javascript" src="./api-to-commands.js"></script>
+  <script type="text/javascript" src="./speaker.js"></script>
+</head>
+<body>
+  <p style="text-align: center">
+    <script type="text/javascript">
+        function chatWith(voiceDescription) {
+            const [locale, voiceName] = voiceDescription.split(" -- ");
+            const voiceFound = speaker.findVoice(voiceName?.trim() ?? voiceDescription);
+            speak(voiceName);
+            document.querySelector('#voiceName').innerText = voiceFound?.name ?? '';
+        }
+        function speak(addendum = '.') {
+            const spokenText = document.querySelector('#spokenText').value;
+            speaker.say(`${spokenText} ${addendum}`);
+        }
+        function showAllVoices() {
+            const filter = document.querySelector('#q').value;
+            console.log('Show all Voices');
+            speaker = new Speaker({ isLocal: false });
+            const voices = speaker.getAllVoices();
+            const voiceNames = voices
+                .map(voice => `${voice.lang} -- ${voice.name} ${voice.localService ? '-- local' : ''}`)
+                .filter(voiceName => !filter || voiceName.indexOf(filter) > -1);
+            document.querySelector('#Voice').innerHTML = voiceNames.map(v => `<option onclick="chatWith('${v}')">${v}</option>`).join('\n');
+            document.querySelector('#voiceName').innerText = `${voiceNames.length}`;
+        }
+      </script>
+    <input type=search id=q title="Search" placeholder="Search" onchange="showAllVoices()" onsubmit="showAllVoices()" /><br/>
+    <textarea title="Spoken Text" cols=40 rows=8 id="spokenText">hello from </textarea><br/>
+    <button onclick="showAllVoices()">Show Voices</button>
+    <button onclick="speak()">Speak</button><br/><br/>
+    <select size="23" id="Voice" title="Voice">
+        <option>None</option>
+    </select>
+  <div id="voiceName" style="text-align: center;"></div>
+</p>
+<script type="text/javascript">
+    window.addEventListener('load',function () {
+      setTimeout(showAllVoices, 30);
+    });
+    </script>
+</body>
+</html>

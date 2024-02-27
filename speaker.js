@@ -81,7 +81,7 @@ Speaker.prototype = {
 
   getVoices: function getVoices() {
     const voices = this.getNativeVoices();
-    if (!voices.length) return this.getAllVoices();
+    if (!voices.length || !this.isLocal) return this.getAllVoices();
     return voices;
   },
 
