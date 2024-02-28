@@ -6,6 +6,11 @@
   <title>Browser Voices</title>
   <script type="text/javascript" src="./api-to-commands.js"></script>
   <script type="text/javascript" src="./speaker.js"></script>
+  <script type="text/javascript">
+    window.addEventListener('load', function () {
+      setTimeout(showAllVoices, 50);
+    });
+  </script>
 </head>
 <body>
   <p style="text-align: center">
@@ -40,11 +45,37 @@
         <option>None</option>
     </select>
   <div id="voiceName" style="text-align: center;"></div>
+  <hr />
+  <div style="text-align: center">
+  <div class="slidecontainer"  style="vertical-align: middle;">
+    <input type="range" min="0.50" value="1.0" max="1.75" step="0.25" class="slider" id="myRange">
+    Speed: <span id="demo"></span>
+  </div>
+  <div class="slidecontainer"  style="vertical-align: middle;">
+    <input type="range" min="0.50" value="1.0" max="1.75" step="0.05" class="slider" id="pitchRange">
+    Pitch: <span id="pitch">1.0</span>&nbsp;
+  </div>
+  </div>
 </p>
-<script type="text/javascript">
-    window.addEventListener('load',function () {
-      setTimeout(showAllVoices, 30);
-    });
-    </script>
+<script>
+    const slider = document.getElementById("myRange");
+    const output = document.getElementById("demo");
+    output.innerHTML = slider.value;
+    
+    slider.oninput = function() {
+      output.innerHTML = this.value;
+      speaker.setRate(this.value);
+    }
+
+    const pitchSlider = document.getElementById("pitchRange");
+    const pitchOutput = document.getElementById("pitch");
+    pitch.innerHTML = pitchSlider.value;
+    
+    pitchSlider.oninput = function() {
+    pitchOutput.innerHTML = this.value;
+      speaker.setPitch(this.value);
+    }
+
+</script>
 </body>
 </html>
